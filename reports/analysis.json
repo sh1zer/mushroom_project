@@ -1,0 +1,235 @@
+{
+  "chi_square": [
+    {
+      "feature": "stem_color",
+      "chi2": 4439.1,
+      "p_value": 0.0,
+      "cramers_v": 0.27
+    },
+    {
+      "feature": "stem_surface",
+      "chi2": 3928.3,
+      "p_value": 0.0,
+      "cramers_v": 0.254
+    },
+    {
+      "feature": "cap_color",
+      "chi2": 3576.0,
+      "p_value": 0.0,
+      "cramers_v": 0.242
+    },
+    {
+      "feature": "cap_surface",
+      "chi2": 3227.0,
+      "p_value": 0.0,
+      "cramers_v": 0.23
+    },
+    {
+      "feature": "stem_root",
+      "chi2": 3102.5,
+      "p_value": 0.0,
+      "cramers_v": 0.226
+    },
+    {
+      "feature": "gill_attachment",
+      "chi2": 3068.8,
+      "p_value": 0.0,
+      "cramers_v": 0.224
+    },
+    {
+      "feature": "ring_type",
+      "chi2": 2557.1,
+      "p_value": 0.0,
+      "cramers_v": 0.205
+    },
+    {
+      "feature": "spore_print_color",
+      "chi2": 2536.7,
+      "p_value": 0.0,
+      "cramers_v": 0.204
+    },
+    {
+      "feature": "gill_color",
+      "chi2": 2240.0,
+      "p_value": 0.0,
+      "cramers_v": 0.192
+    },
+    {
+      "feature": "cap_shape",
+      "chi2": 2175.2,
+      "p_value": 0.0,
+      "cramers_v": 0.189
+    },
+    {
+      "feature": "habitat",
+      "chi2": 1912.4,
+      "p_value": 0.0,
+      "cramers_v": 0.177
+    },
+    {
+      "feature": "veil_color",
+      "chi2": 1824.8,
+      "p_value": 0.0,
+      "cramers_v": 0.173
+    },
+    {
+      "feature": "season",
+      "chi2": 868.2,
+      "p_value": 0.0,
+      "cramers_v": 0.119
+    },
+    {
+      "feature": "gill_spacing",
+      "chi2": 781.5,
+      "p_value": 0.0,
+      "cramers_v": 0.113
+    },
+    {
+      "feature": "has_ring",
+      "chi2": 208.4,
+      "p_value": 0.0,
+      "cramers_v": 0.058
+    },
+    {
+      "feature": "veil_type",
+      "chi2": 172.7,
+      "p_value": 0.0,
+      "cramers_v": 0.053
+    },
+    {
+      "feature": "does_bruise_or_bleed",
+      "chi2": 21.8,
+      "p_value": 2.9814650664983233e-06,
+      "cramers_v": 0.019
+    }
+  ],
+  "association_rules": {
+    "p": [
+      {
+        "antecedent": [
+          "ring_type=z"
+        ],
+        "confidence": 1.0,
+        "support": 0.035,
+        "lift": 1.806
+      },
+      {
+        "antecedent": [
+          "gill_spacing=c",
+          "stem_color=y"
+        ],
+        "confidence": 1.0,
+        "support": 0.037,
+        "lift": 1.806
+      },
+      {
+        "antecedent": [
+          "cap_shape=b",
+          "has_ring=t"
+        ],
+        "confidence": 1.0,
+        "support": 0.03,
+        "lift": 1.806
+      },
+      {
+        "antecedent": [
+          "cap_surface=t",
+          "does_bruise_or_bleed=f",
+          "gill_spacing=c"
+        ],
+        "confidence": 1.0,
+        "support": 0.046,
+        "lift": 1.806
+      },
+      {
+        "antecedent": [
+          "cap_surface=t",
+          "gill_spacing=c",
+          "has_ring=t"
+        ],
+        "confidence": 1.0,
+        "support": 0.034,
+        "lift": 1.806
+      },
+      {
+        "antecedent": [
+          "cap_color=n",
+          "cap_surface=t",
+          "gill_spacing=c"
+        ],
+        "confidence": 1.0,
+        "support": 0.031,
+        "lift": 1.806
+      },
+      {
+        "antecedent": [
+          "cap_shape=x",
+          "cap_surface=g",
+          "does_bruise_or_bleed=f"
+        ],
+        "confidence": 0.949,
+        "support": 0.035,
+        "lift": 1.714
+      },
+      {
+        "antecedent": [
+          "does_bruise_or_bleed=f",
+          "has_ring=t",
+          "stem_surface=y"
+        ],
+        "confidence": 0.937,
+        "support": 0.041,
+        "lift": 1.691
+      },
+      {
+        "antecedent": [
+          "cap_surface=k"
+        ],
+        "confidence": 0.921,
+        "support": 0.035,
+        "lift": 1.664
+      },
+      {
+        "antecedent": [
+          "cap_shape=b",
+          "gill_spacing=missing"
+        ],
+        "confidence": 0.92,
+        "support": 0.035,
+        "lift": 1.66
+      }
+    ],
+    "e": [
+      {
+        "antecedent": [
+          "cap_color=n",
+          "gill_attachment=e",
+          "veil_color=missing"
+        ],
+        "confidence": 0.963,
+        "support": 0.032,
+        "lift": 2.158
+      },
+      {
+        "antecedent": [
+          "cap_color=n",
+          "gill_attachment=e",
+          "veil_type=missing"
+        ],
+        "confidence": 0.963,
+        "support": 0.032,
+        "lift": 2.158
+      },
+      {
+        "antecedent": [
+          "gill_color=w",
+          "stem_root=missing",
+          "stem_surface=s"
+        ],
+        "confidence": 0.939,
+        "support": 0.03,
+        "lift": 2.105
+      }
+    ]
+  }
+}

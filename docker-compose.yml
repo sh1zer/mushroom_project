@@ -1,0 +1,66 @@
+name: mushroom-bigdata
+
+x-spark: &spark
+  build: ./docker/spark
+  image: mushroom-spark:3.5.5
+  volumes:
+    - ./:/opt/project
+  environment:
+    SPARK_MASTER: spark://spark-master:7077
+    KAFKA_BOOTSTRAP: kafka:9092
+
+services:
+  kafka:
+    image: apache/kafka:3.9.1
+    ports:
+      - "9094:9094"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+
+  spark-master:
+    <<: *spark
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.master.Master", "--host", "spark-master"]
+    hostname: spark-master
+    ports:
+      - "8080:8080"
+
+  spark-worker:
+    <<: *spark
+    depends_on: [spark-master]
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077", "--cores", "4", "--memory", "4g"]
+    ports:
+      - "8081:8081"
+
+  spark-streaming:
+    <<: *spark
+    profiles: [streaming]
+    depends_on: [spark-master, kafka]
+    command:
+      - /opt/spark/bin/spark-submit
+      - --master
+      - spark://spark-master:7077
+      - --packages
+      - org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.5
+      - --conf
+      - spark.jars.ivy=/opt/project/.cache/ivy
+      - --conf
+      - spark.cores.max=2
+      - /opt/project/src/mushroom/stream_job.py
+
+  backend:
+    build: ./docker/backend
+    depends_on: [kafka]
+    volumes:
+      - ./:/opt/project
+    environment:
+      KAFKA_BOOTSTRAP: kafka:9092
+    ports:
+      - "8000:8000"

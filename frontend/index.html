@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grzyby - Big Data</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Klasyfikacja jadalności grzybów</h1>
+<p class="muted">Kafka → Spark Structured Streaming (model MLlib) → Kafka → FastAPI → przeglądarka</p>
+
+<div class="tiles">
+  <div><span>Zdarzenia</span><b id="events">0</b></div>
+  <div><span>Decyzja "nie jeść"</span><b id="flagged">0</b></div>
+  <div><span>"Prawdopodobnie jadalny"</span><b id="edible">0</b></div>
+  <div class="danger"><span>Trujące przepuszczone</span><b id="missed">0</b></div>
+</div>
+
+<h2>Ostatnie predykcje</h2>
+<table>
+  <thead><tr><th>Kapelusz [cm]</th><th>Kolor kapelusza</th><th>Siedlisko</th><th>P(trujący)</th><th>Decyzja</th><th>Prawdziwa klasa</th></tr></thead>
+  <tbody id="rows"></tbody>
+</table>
+
+<h2>Własna obserwacja</h2>
+<form id="form"></form>
+<p id="result" class="muted">Wypełnij formularz i wyślij. Wynik wraca przez Kafkę i Spark po kilku sekundach.</p>
+
+<script src="app.js"></script>
+</body>
+</html>
