@@ -34,7 +34,7 @@ więc wolimy mieć więcej fałszywych alarmów niż wyższą trafność.
 - **Szukanie zależności** w Spark (`analysis.py`): test χ² z współczynnikiem V Craméra, reguły asocjacyjne FP-Growth.
 - **Uczenie maszynowe** w Spark MLlib (`train.py`): 4 modele, strojenie z walidacją krzyżową.
 - **Strumień**: Apache Kafka + Spark Structured Streaming (`producer.py`, `stream_job.py`).
-- **Backend i frontend**: FastAPI (`src/mushroom/backend.py`) i prosta strona HTML/JS (`frontend/`).
+- **Backend i frontend**: FastAPI (`src/mushroom/web/backend.py`) i prosta strona HTML/JS (`frontend/`).
 - **Środowisko**: PyCharm, Docker Compose (Kafka, Spark master i worker, backend).
 
 ---
@@ -110,7 +110,7 @@ Najpierw zrobiliśmy EDA w notatniku `01_eda.ipynb`. Wynikło z niej kilka decyz
 - wiersze są ułożone gatunkami, więc dopisujemy do każdego wiersza numer gatunku,
 - usuwamy 146 duplikatów.
 
-Skrypt ETL (`src/mushroom/etl.py`) w Sparku:
+Skrypt ETL (`src/mushroom/batch/etl.py`) w Sparku:
 
 1. wczytuje plik CSV i zamienia nazwy kolumn na `snake_case` (`cap-diameter` → `cap_diameter`),
 2. numeruje wiersze (`zipWithIndex`) i liczy numer gatunku jako `numer_wiersza / 353`,
@@ -122,7 +122,7 @@ Po ETL zostaje 60 923 rekordów.
 
 ### 3.2. Szukanie ukrytych zależności
 
-Skrypt `src/mushroom/analysis.py` (Spark) zapisuje wyniki do `reports/analysis.json`, a wykresy są w notatniku `02_wyniki.ipynb`.
+Skrypt `src/mushroom/batch/analysis.py` (Spark) zapisuje wyniki do `reports/analysis.json`, a wykresy są w notatniku `02_wyniki.ipynb`.
 
 **Test χ² i V Craméra.** Każda z 17 cech kategorycznych jest statystycznie powiązana z klasą, ale związek jest słaby. Najsilniejsze cechy to kolor trzonu (V = 0,27), powierzchnia trzonu (0,25) i kolor kapelusza (0,24), a najsłabsza to siniaczenie (0,02).
 
@@ -150,6 +150,8 @@ Skrypt `src/mushroom/analysis.py` (Spark) zapisuje wyniki do `reports/analysis.j
 | `analysis.py` | Parquet | wyniki analizy (JSON) |
 | `train.py` | Parquet | zapisany model Spark ML + metryki (JSON) |
 | `stream_job.py` | Kafka (JSON) | Kafka (JSON) |
+
+Kod jest w `src/mushroom/`: zadania wsadowe Sparka w `batch/` (`etl.py`, `analysis.py`, `train.py`), strumień w `stream/` (`producer.py`, `stream_job.py`), backend w `web/`, a ustawienia i wspólne funkcje w `config.py` i `common.py`.
 
 Wybraliśmy Parquet, bo jest kolumnowy, skompresowany i ma zapisany schemat (typy kolumn). Wszystkie zadania uruchamiamy w klastrze Spark (master + worker w Dockerze) poleceniem `spark-submit`, np. `.\run.ps1 etl`.
 

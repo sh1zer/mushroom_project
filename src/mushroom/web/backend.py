@@ -26,13 +26,13 @@ Observation = create_model(
 def consume() -> None:
     while True:
         try:
-            consumer = KafkaConsumer(C.TOPIC_PREDICTIONS, bootstrap_servers=C.KAFKA_BOOTSTRAP, value_deserializer=json.loads)
+            consumer = KafkaConsumer(C.TOPIC_PREDICTIONS, bootstrap_servers=C.KAFKA_BOOTSTRAP)
             for message in consumer:
-                p = message.value
+                p = json.loads(message.value)
                 latest.appendleft(p)
                 totals["events"] += 1
                 totals[p["decision"]] += 1
-                if p["true_class"] == "p" and p["decision"] != "NIE_JESC":
+                if p.get("true_class") == "p" and p["decision"] != "NIE_JESC":
                     totals["missed_poisonous"] += 1
         except Exception as exc:
             print(f"Kafka consumer error, retrying in 5 s: {exc}")
@@ -41,7 +41,7 @@ def consume() -> None:
 
 @lru_cache(maxsize=1)
 def producer() -> KafkaProducer:
-    return KafkaProducer(bootstrap_servers=C.KAFKA_BOOTSTRAP, value_serializer=lambda v: json.dumps(v).encode("utf-8"))
+    return KafkaProducer(bootstrap_servers=C.KAFKA_BOOTSTRAP)
 
 
 app = FastAPI(title="Mushroom Big Data API")
@@ -64,7 +64,7 @@ def predictions() -> dict:
 @app.post("/api/observations")
 def submit(observation: Observation) -> dict:
     event = {"event_id": str(uuid.uuid4()), "true_class": None, **observation.model_dump()}
-    producer().send(C.TOPIC_OBSERVATIONS, event).get(timeout=10)
+    producer().send(C.TOPIC_OBSERVATIONS, json.dumps(event).encode("utf-8")).get(timeout=10)
     return {"event_id": event["event_id"]}
 
 

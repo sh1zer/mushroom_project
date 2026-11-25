@@ -53,7 +53,7 @@ services:
       - spark.jars.ivy=/opt/project/.cache/ivy
       - --conf
       - spark.cores.max=2
-      - /opt/project/src/mushroom/stream_job.py
+      - /opt/project/src/mushroom/stream/stream_job.py
 
   backend:
     build: ./docker/backend

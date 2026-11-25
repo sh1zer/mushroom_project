@@ -2,6 +2,14 @@
 
 Sprawozdanie: `docs/sprawozdanie.md`
 
+## Co gdzie jest
+
+- `src/mushroom/batch/` - Spark wsadowo: `etl.py` (CSV → Parquet), `analysis.py` (χ², FP-Growth), `train.py` (modele)
+- `src/mushroom/stream/` - `producer.py` (wysyła grzyby do Kafki), `stream_job.py` (Spark Streaming + model)
+- `src/mushroom/web/backend.py` + `frontend/` - strona
+- `src/mushroom/config.py`, `common.py` - ustawienia i wspólne funkcje
+- `notebooks/` - EDA i wykresy wyników
+
 ## Instalacja
 
 Potrzebny Docker i Python 3.11. Jeśli Docker Desktop nie działa, a Docker jest zainstalowany w Ubuntu (WSL), najpierw w terminalu:

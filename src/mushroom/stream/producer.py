@@ -29,9 +29,9 @@ def main() -> None:
     args = parser.parse_args()
 
     rows = load_rows()
-    producer = KafkaProducer(bootstrap_servers=C.KAFKA_BOOTSTRAP, value_serializer=lambda v: json.dumps(v).encode("utf-8"))
+    producer = KafkaProducer(bootstrap_servers=C.KAFKA_BOOTSTRAP)
     for i in range(args.limit):
-        producer.send(C.TOPIC_OBSERVATIONS, to_event(random.choice(rows)))
+        producer.send(C.TOPIC_OBSERVATIONS, json.dumps(to_event(random.choice(rows))).encode("utf-8"))
         if (i + 1) % 100 == 0:
             print(f"sent {i + 1}")
         time.sleep(1 / args.rate)
