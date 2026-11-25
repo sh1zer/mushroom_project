@@ -25,7 +25,7 @@ def to_event(row: dict) -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Wysyła losowe rekordy z secondary_data.csv do Kafki")
     parser.add_argument("--rate", type=float, default=5.0, help="zdarzeń na sekundę")
-    parser.add_argument("--limit", type=int, default=1000)
+    parser.add_argument("--limit", type=int, default=100)
     args = parser.parse_args()
 
     rows = load_rows()
