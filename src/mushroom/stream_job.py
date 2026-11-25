@@ -7,8 +7,7 @@ from pyspark.sql import functions as F
 from pyspark.sql.types import DoubleType, StringType, StructField, StructType
 
 from mushroom import config as C
-from mushroom.spark_utils import get_spark
-from mushroom.transforms import clean_features
+from mushroom.common import clean_features, get_spark
 
 SCHEMA = StructType(
     [StructField("event_id", StringType()), StructField("true_class", StringType())]

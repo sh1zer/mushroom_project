@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $true, Position = 0)]
-    [ValidateSet("up", "download", "etl", "analysis", "train", "stream", "producer", "notebooks", "down")]
+    [ValidateSet("up", "etl", "analysis", "train", "stream", "producer", "notebooks", "down")]
     [string]$Task,
     [Parameter(ValueFromRemainingArguments = $true)]
     [string[]]$Rest
@@ -18,7 +18,6 @@ function Submit-SparkJob([string]$Job) {
 
 switch ($Task) {
     "up"        { docker compose up -d --build kafka spark-master spark-worker backend }
-    "download"  { python scripts/download_data.py }
     "etl"       { Submit-SparkJob "etl" }
     "analysis"  { Submit-SparkJob "analysis" }
     "train"     { Submit-SparkJob "train" }

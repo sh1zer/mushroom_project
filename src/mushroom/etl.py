@@ -1,10 +1,24 @@
+import io
+import urllib.request
+import zipfile
+
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql import functions as F
 from pyspark.sql.types import LongType, StructField, StructType
 
 from mushroom import config as C
-from mushroom.spark_utils import get_spark
-from mushroom.transforms import clean_features, normalize_columns
+from mushroom.common import clean_features, get_spark, normalize_columns
+
+DATA_URL = "https://archive.ics.uci.edu/static/public/848/secondary+mushroom+dataset.zip"
+
+
+def download() -> None:
+    C.RAW_DIR.mkdir(parents=True, exist_ok=True)
+    with urllib.request.urlopen(DATA_URL, timeout=60) as r:
+        outer = zipfile.ZipFile(io.BytesIO(r.read()))
+    inner = zipfile.ZipFile(io.BytesIO(outer.read("MushroomDataset.zip")))
+    C.SECONDARY_CSV.write_bytes(inner.read("MushroomDataset/secondary_data.csv"))
+    print(f"downloaded {C.SECONDARY_CSV}")
 
 
 def read_secondary(spark: SparkSession) -> DataFrame:
@@ -24,6 +38,8 @@ def build_clean(raw: DataFrame) -> DataFrame:
 
 
 def run() -> None:
+    if not C.SECONDARY_CSV.exists():
+        download()
     spark = get_spark("mushroom-etl")
     clean = build_clean(read_secondary(spark))
     clean.write.mode("overwrite").partitionBy("class").parquet(str(C.MUSHROOMS_PARQUET))

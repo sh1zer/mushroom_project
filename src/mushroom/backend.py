@@ -4,7 +4,6 @@ import time
 import uuid
 from collections import Counter, deque
 from functools import lru_cache
-from pathlib import Path
 from typing import Optional
 
 from fastapi import FastAPI
@@ -69,4 +68,4 @@ def submit(observation: Observation) -> dict:
     return {"event_id": event["event_id"]}
 
 
-app.mount("/", StaticFiles(directory=Path(__file__).resolve().parents[1] / "frontend", html=True))
+app.mount("/", StaticFiles(directory=C.PROJECT_ROOT / "frontend", html=True))

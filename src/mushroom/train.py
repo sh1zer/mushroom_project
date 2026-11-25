@@ -10,7 +10,7 @@ from pyspark.sql import DataFrame, Window
 from pyspark.sql import functions as F
 
 from mushroom import config as C
-from mushroom.spark_utils import get_spark
+from mushroom.common import get_spark
 
 N_FOLDS = 4
 TEST_SPECIES_SHARE = 0.2

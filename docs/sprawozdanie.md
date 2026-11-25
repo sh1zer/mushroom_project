@@ -12,33 +12,40 @@ Kod projektu jest w katalogu `mushroom_project`, a instrukcja uruchomienia w `RE
 
 ### 1.1. Cel
 
-W Polsce co roku zdarzają się zatrucia grzybami, a wiele osób ocenia grzyby "na oko" (kolor, pierścień, kształt). Chcieliśmy sprawdzić, czy model uczenia maszynowego potrafi na podstawie takich prostych cech odróżnić grzyby jadalne od trujących. Drugim celem było zbudowanie małego systemu Big Data, w którym obserwacje grzybów przychodzą jako strumień przez Kafkę, a Spark na bieżąco je ocenia.
+W Polsce co roku zdarzają się zatrucia grzybami, a wiele osób ocenia grzyby "na oko" (kolor, pierścień, kształt). 
+Chcieliśmy sprawdzić, czy model uczenia maszynowego potrafi na podstawie takich prostych cech odróżnić grzyby jadalne 
+od trujących. Drugim celem było zbudowanie małego systemu Big Data, w którym obserwacje grzybów przychodzą jako strumień 
+przez Kafkę, a Spark na bieżąco je ocenia.
 
 ### 1.2. Tezy
 
-- **H1:** Modele będą bardzo dokładne (> 95%) dla gatunków, które były w danych treningowych, ale dla nowych gatunków ich jakość mocno spadnie.
-- **H2:** Nie ma jednej prostej reguły (np. "biały grzyb jest jadalny"), która pozwala bezpiecznie uznać grzyb za jadalny.
-- **H3:** Braki w danych nie są przypadkowe i same mówią coś o klasie grzyba.
+- **H1:** Modele będą bardzo dokładne (> 95%) dla gatunków, które były w danych treningowych, ale dla nowych gatunków 
+ich jakość mocno spadnie.
+- **H2:** Nie ma jednej prostej reguły (np. "biały grzyb jest jadalny"), która pozwala bezpiecznie uznać grzyb za 
+jadalny.
+- **H3:** Obniżając próg decyzyjny, da się wyłapać wszystkie trujące grzyby i nadal rozpoznawać większość jadalnych. 
+Uznanie jadalnego grzyba za trujący kosztuje najwyżej wyrzucony grzyb, a odwrotny błąd może skończyć się zatruciem, 
+więc wolimy mieć więcej fałszywych alarmów niż wyższą trafność.
 
 ### 1.3. Wykorzystane metody i narzędzia
 
-- **EDA** w Jupyterze (`notebooks/01_eda.ipynb`): pandas, wykresy seaborn, test χ² i test U Manna-Whitneya (scipy). Notatnik działa też w Google Colab.
+- **EDA** w Jupyterze (`notebooks/01_eda.ipynb`): pandas, wykresy seaborn, test χ² i test U Manna-Whitneya (scipy). 
 - **ETL** w Apache Spark (`etl.py`): wczytanie CSV, czyszczenie, zapis do Parquet.
 - **Szukanie zależności** w Spark (`analysis.py`): test χ² z współczynnikiem V Craméra, reguły asocjacyjne FP-Growth.
 - **Uczenie maszynowe** w Spark MLlib (`train.py`): 4 modele, strojenie z walidacją krzyżową.
 - **Strumień**: Apache Kafka + Spark Structured Streaming (`producer.py`, `stream_job.py`).
-- **Backend i frontend**: FastAPI (`backend/main.py`) i prosta strona HTML/JS (`frontend/`).
+- **Backend i frontend**: FastAPI (`src/mushroom/backend.py`) i prosta strona HTML/JS (`frontend/`).
 - **Środowisko**: PyCharm, Docker Compose (Kafka, Spark master i worker, backend).
 
 ---
 
 ## 2. Dobór danych
 
-### 2.1. Skąd są dane i dlaczego te
+### 2.1. Skąd
 
-Wybraliśmy Secondary Mushroom Dataset [1], czyli nowszą wersję znanego zbioru *Mushroom* z UCI. Stary zbiór był za łatwy (sam zapach grzyba dawał prawie 100% trafności). Nowy ma 173 gatunki z 23 rodzin, cechy liczbowe (wymiary) i braki danych, więc jest ciekawszy do analizy.
+Dataset Secondary Mushroom Dataset [1], to nowsza wersja datasetu "Mushroom". Stary zbiór był zbyt mały aby dawać sensowne wyniki.
 
-Dane można pobrać skryptem `scripts/download_data.py` albo w Colabie biblioteką `ucimlrepo`:
+Skrypt `etl.py` sam pobiera dane z UCI, jeśli nie ma ich jeszcze na dysku. Można je też pobrać biblioteką `ucimlrepo`:
 
 ```python
 from ucimlrepo import fetch_ucirepo
@@ -99,7 +106,7 @@ Kafka działa w Dockerze w trybie KRaft (bez ZooKeepera), z jednym brokerem.
 
 Najpierw zrobiliśmy EDA w notatniku `01_eda.ipynb`. Wynikło z niej kilka decyzji:
 
-- braki danych zależą od klasy (H3), więc ich nie usuwamy, tylko zamieniamy na osobną wartość `missing`,
+- braki danych zależą od klasy, więc ich nie usuwamy, tylko zamieniamy na osobną wartość `missing`,
 - wiersze są ułożone gatunkami, więc dopisujemy do każdego wiersza numer gatunku,
 - usuwamy 146 duplikatów.
 
@@ -127,7 +134,7 @@ Skrypt `src/mushroom/analysis.py` (Spark) zapisuje wyniki do `reports/analysis.j
 
 **Reguły asocjacyjne FP-Growth.** Każdy grzyb traktujemy jak "koszyk" z elementami typu `kolor_kapelusza=brązowy` i `class=p`. FP-Growth (minimalne wsparcie 3%, ufność 90%) znalazł 6 reguł, które w 100% wskazują grzyb trujący, np. `ring_type=z` (pierścień strefowy) albo `cap_shape=b ∧ has_ring=t` (dzwonkowaty kapelusz z pierścieniem). Dla grzybów jadalnych znalazł tylko 3 reguły, a najlepsza ma ufność 96,3%, czyli co 27. grzyb spełniający tę regułę i tak jest trujący. Łatwiej więc znaleźć sygnały ostrzegawcze niż potwierdzić, że grzyb jest bezpieczny (H2).
 
-**Braki danych.** Test χ² pokazał, że braki zależą od klasy (p < 10⁻¹⁵ dla 7 z 9 cech). Np. wszystkie grzyby z dokładnie 2 brakującymi cechami są trujące (H3).
+**Braki danych.** Test χ² pokazał, że braki zależą od klasy (p < 10⁻¹⁵ dla 7 z 9 cech). Np. wszystkie grzyby z dokładnie 2 brakującymi cechami są trujące. Dlatego w ETL brak jest osobną kategorią, a nie usuniętym rekordem.
 
 ![Braki a klasa](../reports/figures/03_missing_count.png)
 
@@ -139,8 +146,7 @@ Skrypt `src/mushroom/analysis.py` (Spark) zapisuje wyniki do `reports/analysis.j
 
 | Skrypt | Wejście | Wyjście |
 |---|---|---|
-| `scripts/download_data.py` | strona UCI | plik CSV w `data/raw` |
-| `etl.py` | CSV | Parquet |
+| `etl.py` | CSV (pobierany z UCI, jeśli go nie ma) | Parquet |
 | `analysis.py` | Parquet | wyniki analizy (JSON) |
 | `train.py` | Parquet | zapisany model Spark ML + metryki (JSON) |
 | `stream_job.py` | Kafka (JSON) | Kafka (JSON) |
@@ -175,7 +181,7 @@ Przy losowym podziale las losowy i GBT są prawie idealne. Przy nowych gatunkach
 
 **Strojenie.** Las losowy stroiliśmy `CrossValidator`em na siatce: liczba drzew {50, 100} × głębokość {8, 12}. Foldy walidacji ułożyliśmy po gatunkach (`foldCol`), żeby każdy gatunek był w całości w jednym foldzie. Wszystkie 4 ustawienia dały AUC 0,66-0,68, więc różnice są niewielkie: z cech jednych gatunków słabo da się przewidzieć jadalność innych. Najlepsze okazało się 100 drzew i głębokość 12, czyli te same ustawienia co w porównaniu. Takiego lasu losowego używamy w strumieniu, bo prawie dorównuje GBT na znanych gatunkach i jest najlepszy na nowych.
 
-**Próg bezpieczeństwa.** Domyślnie model mówi "trujący", gdy prawdopodobieństwo jest ≥ 0,5. Ale uznanie trującego grzyba za jadalny jest dużo gorsze niż odwrotnie, więc w strumieniu obniżyliśmy próg do 0,3 (`SAFETY_THRESHOLD` w `config.py`). Poniżej czułość (jaki procent trujących wyłapujemy) i swoistość (jaki procent jadalnych rozpoznajemy):
+**Próg bezpieczeństwa (H3).** Domyślnie model mówi "trujący", gdy prawdopodobieństwo jest ≥ 0,5, czyli maksymalizuje trafność i traktuje oba błędy tak samo. Dla grzybów to zły wybór: jadalny grzyb uznany za trujący najwyżej trafi do kosza, a trujący uznany za jadalny może kogoś otruć. Dlatego w strumieniu obniżyliśmy próg do 0,3 (`SAFETY_THRESHOLD` w `config.py`), godząc się na więcej fałszywych alarmów. Poniżej czułość (jaki procent trujących wyłapujemy) i swoistość (jaki procent jadalnych rozpoznajemy):
 
 | Zbiór testowy | Próg | Czułość (trujące) | Swoistość (jadalne) | Trujące uznane za jadalne |
 |---|---|---|---|---|
@@ -198,7 +204,7 @@ Na koniec las losowy jest uczony na wszystkich 60 923 rekordach i zapisywany do 
 
 - **H1 - potwierdzona.** Na znanych gatunkach mamy 99% trafności, a na nowych 45-60% (przy 55,6% dla zgadywania).
 - **H2 - potwierdzona.** Żadna pojedyncza cecha nie daje pewności, że grzyb jest jadalny. Są za to reguły, które na 100% wskazują grzyb trujący.
-- **H3 - potwierdzona.** Braki danych są mocno powiązane z klasą.
+- **H3 - potwierdzona tylko dla znanych gatunków.** Przy progu 0,3 model wyłapuje wszystkie trujące grzyby ze znanych gatunków i nadal rozpoznaje 83% jadalnych (trafność spada z 98,9% do 92,4%). Na nowych gatunkach przy tym progu przepuszcza 8% trujących i uznaje za trujące prawie wszystkie jadalne.
 
 ### 4.2. Najważniejsze wnioski
 

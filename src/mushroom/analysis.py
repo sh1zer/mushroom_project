@@ -9,7 +9,7 @@ from pyspark.sql import DataFrame
 from pyspark.sql import functions as F
 
 from mushroom import config as C
-from mushroom.spark_utils import get_spark
+from mushroom.common import get_spark
 
 IDX = [f"{c}_idx" for c in C.CATEGORICAL_FEATURES]
 
