@@ -10,6 +10,8 @@ $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
 $env:PYTHONPATH = Join-Path $PSScriptRoot "src"
 
+function docker { if ($env:DOCKER_WSL) { wsl --cd $PSScriptRoot docker @args } else { docker.exe @args } }
+
 function Submit-SparkJob([string]$Job) {
     docker compose exec spark-master /opt/spark/bin/spark-submit --master spark://spark-master:7077 --driver-memory 2g --executor-memory 3g "/opt/project/src/mushroom/$Job.py"
 }

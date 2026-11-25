@@ -2,8 +2,8 @@
   "data": {
     "rows": 60923,
     "random_split": [
-      49025,
-      11898
+      48943,
+      11980
     ],
     "species_split": [
       137,
@@ -17,157 +17,157 @@
   "random": [
     {
       "model": "LogisticRegression",
-      "auc": 0.9392,
-      "accuracy": 0.8648,
-      "recall_poisonous": 0.8747,
-      "specificity": 0.8524,
-      "poisonous_as_edible": 825
+      "auc": 0.9374,
+      "accuracy": 0.8609,
+      "recall_poisonous": 0.8752,
+      "specificity": 0.8432,
+      "poisonous_as_edible": 824
     },
     {
       "model": "DecisionTree",
-      "auc": 0.9667,
-      "accuracy": 0.8822,
-      "recall_poisonous": 0.9555,
-      "specificity": 0.7915,
-      "poisonous_as_edible": 293
+      "auc": 0.9688,
+      "accuracy": 0.8846,
+      "recall_poisonous": 0.9582,
+      "specificity": 0.7941,
+      "poisonous_as_edible": 276
     },
     {
       "model": "RandomForest",
-      "auc": 0.9997,
-      "accuracy": 0.9913,
-      "recall_poisonous": 0.9912,
-      "specificity": 0.9913,
-      "poisonous_as_edible": 58
+      "auc": 0.9996,
+      "accuracy": 0.9891,
+      "recall_poisonous": 0.9905,
+      "specificity": 0.9875,
+      "poisonous_as_edible": 63
     },
     {
       "model": "GBT",
       "auc": 0.9998,
-      "accuracy": 0.9911,
-      "recall_poisonous": 0.9923,
-      "specificity": 0.9896,
-      "poisonous_as_edible": 51
+      "accuracy": 0.991,
+      "recall_poisonous": 0.9892,
+      "specificity": 0.9931,
+      "poisonous_as_edible": 71
     }
   ],
   "species_holdout": [
     {
       "model": "LogisticRegression",
-      "auc": 0.6264,
-      "accuracy": 0.6041,
-      "recall_poisonous": 0.5989,
-      "specificity": 0.6107,
-      "poisonous_as_edible": 2832
+      "auc": 0.5995,
+      "accuracy": 0.5548,
+      "recall_poisonous": 0.613,
+      "specificity": 0.4821,
+      "poisonous_as_edible": 2732
     },
     {
       "model": "DecisionTree",
-      "auc": 0.5905,
-      "accuracy": 0.601,
-      "recall_poisonous": 0.5752,
-      "specificity": 0.6333,
-      "poisonous_as_edible": 2999
+      "auc": 0.4248,
+      "accuracy": 0.4514,
+      "recall_poisonous": 0.5292,
+      "specificity": 0.3541,
+      "poisonous_as_edible": 3324
     },
     {
       "model": "RandomForest",
-      "auc": 0.5826,
-      "accuracy": 0.5716,
-      "recall_poisonous": 0.6058,
-      "specificity": 0.5289,
-      "poisonous_as_edible": 2783
+      "auc": 0.609,
+      "accuracy": 0.5945,
+      "recall_poisonous": 0.7422,
+      "specificity": 0.4099,
+      "poisonous_as_edible": 1820
     },
     {
       "model": "GBT",
-      "auc": 0.6062,
-      "accuracy": 0.6485,
-      "recall_poisonous": 0.6748,
-      "specificity": 0.6156,
-      "poisonous_as_edible": 2296
+      "auc": 0.519,
+      "accuracy": 0.5195,
+      "recall_poisonous": 0.5882,
+      "specificity": 0.4336,
+      "poisonous_as_edible": 2907
     }
   ],
   "tuning": [
     {
       "numTrees": 50,
       "maxDepth": 8,
-      "cv_auc": 0.6253
+      "cv_auc": 0.6576
     },
     {
       "numTrees": 50,
       "maxDepth": 12,
-      "cv_auc": 0.6249
+      "cv_auc": 0.6619
     },
     {
       "numTrees": 100,
       "maxDepth": 8,
-      "cv_auc": 0.6321
+      "cv_auc": 0.6788
     },
     {
       "numTrees": 100,
       "maxDepth": 12,
-      "cv_auc": 0.6445
+      "cv_auc": 0.6813
     }
   ],
   "threshold_curve": {
     "known": [
       {
         "threshold": 0.1,
-        "accuracy": 0.5624,
+        "accuracy": 0.5567,
         "recall_poisonous": 1.0,
-        "specificity": 0.02,
+        "specificity": 0.0121,
         "poisonous_as_edible": 0
       },
       {
         "threshold": 0.2,
-        "accuracy": 0.7632,
+        "accuracy": 0.7612,
         "recall_poisonous": 1.0,
-        "specificity": 0.4698,
+        "specificity": 0.4678,
         "poisonous_as_edible": 0
       },
       {
         "threshold": 0.3,
-        "accuracy": 0.922,
+        "accuracy": 0.9235,
         "recall_poisonous": 1.0,
-        "specificity": 0.8253,
+        "specificity": 0.8294,
         "poisonous_as_edible": 0
       },
       {
         "threshold": 0.4,
-        "accuracy": 0.9782,
-        "recall_poisonous": 1.0,
-        "specificity": 0.9513,
-        "poisonous_as_edible": 0
+        "accuracy": 0.9755,
+        "recall_poisonous": 0.997,
+        "specificity": 0.9492,
+        "poisonous_as_edible": 20
       },
       {
         "threshold": 0.5,
-        "accuracy": 0.9913,
-        "recall_poisonous": 0.9912,
-        "specificity": 0.9913,
-        "poisonous_as_edible": 58
+        "accuracy": 0.9891,
+        "recall_poisonous": 0.9905,
+        "specificity": 0.9875,
+        "poisonous_as_edible": 63
       },
       {
         "threshold": 0.6,
-        "accuracy": 0.9767,
-        "recall_poisonous": 0.9581,
-        "specificity": 0.9998,
-        "poisonous_as_edible": 276
+        "accuracy": 0.9776,
+        "recall_poisonous": 0.9594,
+        "specificity": 1.0,
+        "poisonous_as_edible": 268
       },
       {
         "threshold": 0.7,
-        "accuracy": 0.9276,
-        "recall_poisonous": 0.8692,
+        "accuracy": 0.9301,
+        "recall_poisonous": 0.8733,
         "specificity": 1.0,
-        "poisonous_as_edible": 861
+        "poisonous_as_edible": 837
       },
       {
         "threshold": 0.8,
-        "accuracy": 0.7955,
-        "recall_poisonous": 0.6305,
+        "accuracy": 0.7972,
+        "recall_poisonous": 0.632,
         "specificity": 1.0,
-        "poisonous_as_edible": 2433
+        "poisonous_as_edible": 2430
       },
       {
         "threshold": 0.9,
-        "accuracy": 0.5972,
-        "recall_poisonous": 0.2723,
+        "accuracy": 0.5781,
+        "recall_poisonous": 0.2347,
         "specificity": 1.0,
-        "poisonous_as_edible": 4792
+        "poisonous_as_edible": 5054
       }
     ],
     "unseen": [
@@ -180,58 +180,58 @@
       },
       {
         "threshold": 0.2,
-        "accuracy": 0.5551,
-        "recall_poisonous": 0.9979,
-        "specificity": 0.0016,
-        "poisonous_as_edible": 15
+        "accuracy": 0.5452,
+        "recall_poisonous": 0.9813,
+        "specificity": 0.0,
+        "poisonous_as_edible": 132
       },
       {
         "threshold": 0.3,
-        "accuracy": 0.5268,
-        "recall_poisonous": 0.8882,
-        "specificity": 0.0751,
-        "poisonous_as_edible": 789
+        "accuracy": 0.5123,
+        "recall_poisonous": 0.9195,
+        "specificity": 0.0032,
+        "poisonous_as_edible": 568
       },
       {
         "threshold": 0.4,
-        "accuracy": 0.5626,
-        "recall_poisonous": 0.801,
-        "specificity": 0.2645,
-        "poisonous_as_edible": 1405
+        "accuracy": 0.5265,
+        "recall_poisonous": 0.8588,
+        "specificity": 0.1112,
+        "poisonous_as_edible": 997
       },
       {
         "threshold": 0.5,
-        "accuracy": 0.5716,
-        "recall_poisonous": 0.6058,
-        "specificity": 0.5289,
-        "poisonous_as_edible": 2783
+        "accuracy": 0.5945,
+        "recall_poisonous": 0.7422,
+        "specificity": 0.4099,
+        "poisonous_as_edible": 1820
       },
       {
         "threshold": 0.6,
-        "accuracy": 0.5607,
-        "recall_poisonous": 0.4365,
-        "specificity": 0.7158,
-        "poisonous_as_edible": 3978
+        "accuracy": 0.6124,
+        "recall_poisonous": 0.5316,
+        "specificity": 0.7135,
+        "poisonous_as_edible": 3307
       },
       {
         "threshold": 0.7,
-        "accuracy": 0.486,
-        "recall_poisonous": 0.2132,
-        "specificity": 0.827,
-        "poisonous_as_edible": 5555
+        "accuracy": 0.4969,
+        "recall_poisonous": 0.1558,
+        "specificity": 0.9233,
+        "poisonous_as_edible": 5960
       },
       {
         "threshold": 0.8,
-        "accuracy": 0.4376,
-        "recall_poisonous": 0.0695,
-        "specificity": 0.8977,
-        "poisonous_as_edible": 6569
+        "accuracy": 0.4452,
+        "recall_poisonous": 0.0106,
+        "specificity": 0.9885,
+        "poisonous_as_edible": 6985
       },
       {
         "threshold": 0.9,
-        "accuracy": 0.4427,
+        "accuracy": 0.4444,
         "recall_poisonous": 0.0,
-        "specificity": 0.9961,
+        "specificity": 1.0,
         "poisonous_as_edible": 7060
       }
     ]
@@ -240,6 +240,6 @@
     "name": "RandomForest",
     "numTrees": 100,
     "maxDepth": 12,
-    "threshold": 0.4
+    "threshold": 0.3
   }
 }

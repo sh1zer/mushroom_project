@@ -162,31 +162,31 @@ Wyniki (accuracy, AUC):
 
 | Model | Losowy podział: accuracy | AUC | Nowe gatunki: accuracy | AUC |
 |---|---|---|---|---|
-| Regresja logistyczna | 86,5% | 0,939 | 60,4% | **0,626** |
-| Drzewo decyzyjne | 88,2% | 0,967 | 60,1% | 0,591 |
-| Las losowy | **99,1%** | 0,9997 | 57,2% | 0,583 |
-| GBT | **99,1%** | **0,9998** | **64,9%** | 0,606 |
+| Regresja logistyczna | 86,1% | 0,937 | 55,5% | 0,600 |
+| Drzewo decyzyjne | 88,5% | 0,969 | 45,1% | 0,425 |
+| Las losowy | 98,9% | 0,9996 | **59,5%** | **0,609** |
+| GBT | **99,1%** | **0,9998** | 52,0% | 0,519 |
 
 Model, który zawsze mówi "trujący", miałby na zbiorze nowych gatunków 55,6%.
 
 ![Porównanie modeli](../reports/figures/07_model_comparison.png)
 
-Przy losowym podziale las losowy i GBT są prawie idealne. Przy nowych gatunkach wszystkie modele są tylko trochę lepsze od zgadywania. Wynik zależy też od tego, które gatunki trafią do testu: przy innym losowaniu 36 gatunków las losowy miał AUC 0,72 zamiast 0,58. Modele uczą się więc rozpoznawać gatunki, które już znają, i nie przenoszą tej wiedzy na nowe (H1).
+Przy losowym podziale las losowy i GBT są prawie idealne. Przy nowych gatunkach tylko las losowy jest trochę lepszy od zgadywania, a drzewo decyzyjne i GBT wypadają nawet gorzej. Wynik zależy też od tego, które gatunki trafią do testu: przy innym losowaniu 36 gatunków las losowy miał AUC 0,72 zamiast 0,61. Modele uczą się więc rozpoznawać gatunki, które już znają, i nie przenoszą tej wiedzy na nowe (H1).
 
-**Strojenie.** Las losowy stroiliśmy `CrossValidator`em na siatce: liczba drzew {50, 100} × głębokość {8, 12}. Foldy walidacji ułożyliśmy po gatunkach (`foldCol`), żeby każdy gatunek był w całości w jednym foldzie. Wszystkie 4 ustawienia dały AUC 0,62-0,64, więc różnice są niewielkie: z cech jednych gatunków słabo da się przewidzieć jadalność innych. Najlepsze okazało się 100 drzew i głębokość 12, czyli te same ustawienia co w porównaniu. Takiego lasu losowego używamy w strumieniu, bo razem z GBT najlepiej działa na znanych gatunkach i daje prawdopodobieństwa, którymi da się sterować progiem.
+**Strojenie.** Las losowy stroiliśmy `CrossValidator`em na siatce: liczba drzew {50, 100} × głębokość {8, 12}. Foldy walidacji ułożyliśmy po gatunkach (`foldCol`), żeby każdy gatunek był w całości w jednym foldzie. Wszystkie 4 ustawienia dały AUC 0,66-0,68, więc różnice są niewielkie: z cech jednych gatunków słabo da się przewidzieć jadalność innych. Najlepsze okazało się 100 drzew i głębokość 12, czyli te same ustawienia co w porównaniu. Takiego lasu losowego używamy w strumieniu, bo prawie dorównuje GBT na znanych gatunkach i jest najlepszy na nowych.
 
-**Próg bezpieczeństwa.** Domyślnie model mówi "trujący", gdy prawdopodobieństwo jest ≥ 0,5. Ale uznanie trującego grzyba za jadalny jest dużo gorsze niż odwrotnie, więc w strumieniu obniżyliśmy próg do 0,4 (`SAFETY_THRESHOLD` w `config.py`). Poniżej czułość (jaki procent trujących wyłapujemy) i swoistość (jaki procent jadalnych rozpoznajemy):
+**Próg bezpieczeństwa.** Domyślnie model mówi "trujący", gdy prawdopodobieństwo jest ≥ 0,5. Ale uznanie trującego grzyba za jadalny jest dużo gorsze niż odwrotnie, więc w strumieniu obniżyliśmy próg do 0,3 (`SAFETY_THRESHOLD` w `config.py`). Poniżej czułość (jaki procent trujących wyłapujemy) i swoistość (jaki procent jadalnych rozpoznajemy):
 
 | Zbiór testowy | Próg | Czułość (trujące) | Swoistość (jadalne) | Trujące uznane za jadalne |
 |---|---|---|---|---|
-| znane gatunki | 0,5 | 99,1% | 99,1% | 58 |
-| znane gatunki | **0,4** | **100%** | 95,1% | **0** |
-| nowe gatunki | 0,5 | 60,6% | 52,9% | 2 783 z 7 060 |
-| nowe gatunki | **0,4** | 80,1% | 26,5% | 1 405 z 7 060 |
+| znane gatunki | 0,5 | 99,1% | 98,8% | 63 |
+| znane gatunki | **0,3** | **100%** | 82,9% | **0** |
+| nowe gatunki | 0,5 | 74,2% | 41,0% | 1 820 z 7 060 |
+| nowe gatunki | **0,3** | 92,0% | 0,3% | 568 z 7 060 |
 
 ![Próg bezpieczeństwa](../reports/figures/08_threshold.png)
 
-Próg 0,4 to najwyższy próg, przy którym na znanych gatunkach model nie przepuszcza ani jednego trującego grzyba, a nadal rozpoznaje 95% jadalnych. Na nowych gatunkach model przy tym samym progu przepuszcza 20% trujących i odrzuca 74% jadalnych. Żeby wyłapać wszystkie trujące grzyby z nowych gatunków, trzeba zejść do progu 0,1, ale wtedy model uznaje za trujące po prostu wszystko.
+Próg 0,3 to najwyższy próg, przy którym na znanych gatunkach model nie przepuszcza ani jednego trującego grzyba, a nadal rozpoznaje 83% jadalnych. Na nowych gatunkach model przy tym samym progu przepuszcza 8% trujących i uznaje za trujące prawie wszystkie jadalne. Żeby wyłapać wszystkie trujące grzyby z nowych gatunków, trzeba zejść do progu 0,1, ale wtedy model uznaje za trujące po prostu wszystko.
 
 Na koniec las losowy jest uczony na wszystkich 60 923 rekordach i zapisywany do `models/best_model`, skąd wczytuje go zadanie strumieniowe.
 
@@ -196,7 +196,7 @@ Na koniec las losowy jest uczony na wszystkich 60 923 rekordach i zapisywany do 
 
 ### 4.1. Tezy
 
-- **H1 - potwierdzona.** Na znanych gatunkach mamy 99% trafności, a na nowych tylko 57-65% (przy 55,6% dla zgadywania).
+- **H1 - potwierdzona.** Na znanych gatunkach mamy 99% trafności, a na nowych 45-60% (przy 55,6% dla zgadywania).
 - **H2 - potwierdzona.** Żadna pojedyncza cecha nie daje pewności, że grzyb jest jadalny. Są za to reguły, które na 100% wskazują grzyb trujący.
 - **H3 - potwierdzona.** Braki danych są mocno powiązane z klasą.
 

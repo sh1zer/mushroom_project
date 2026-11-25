@@ -47,7 +47,7 @@ FEATURES = NUMERIC_FEATURES + CATEGORICAL_FEATURES
 KAFKA_BOOTSTRAP = os.environ.get("KAFKA_BOOTSTRAP", "localhost:9094")
 TOPIC_OBSERVATIONS = "mushroom-observations"
 TOPIC_PREDICTIONS = "mushroom-predictions"
-SAFETY_THRESHOLD = 0.4
+SAFETY_THRESHOLD = 0.3
 
 COLOR_CODES = {
     "n": "brązowy", "b": "płowy", "g": "szary", "r": "zielony", "p": "różowy",

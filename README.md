@@ -4,7 +4,11 @@ Sprawozdanie: `docs/sprawozdanie.md`
 
 ## Instalacja
 
-Potrzebny Docker Desktop i Python 3.11.
+Potrzebny Docker i Python 3.11. Jeśli Docker Desktop nie działa, a Docker jest zainstalowany w Ubuntu (WSL), najpierw w terminalu:
+
+```powershell
+$env:DOCKER_WSL = "1"
+```
 
 ```powershell
 pip install -r requirements.txt
